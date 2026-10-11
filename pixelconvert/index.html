@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pixel Convert</title>
-  <link rel="icon" type="image/x-icon" href="/favicon1.ico">
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
 
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@800;900&family=Plus+Jakarta+Sans:wght@500;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -135,6 +135,33 @@
             align-items: center;
             position: relative;
             width: 100%;
+        }
+
+        .back-home-btn {
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            background: var(--bg-card);
+            color: var(--text-white);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-weight: 800;
+            font-size: 0.85rem;
+            text-decoration: none;
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            font-family: inherit;
+        }
+
+        .back-home-btn:hover {
+            border-color: var(--primary);
+            background: var(--bg-card-hover);
+            transform: translateY(-50%) translateY(-1px);
         }
 
         .brand-container {
@@ -633,8 +660,11 @@
     <!-- Main UI -->
     <div id="pa-main" style="display: none;">
         <div class="pa-header">
+            <a href="https://bloxdtoolz.github.io" class="back-home-btn">
+                <i class="fa-solid fa-arrow-left"></i> Back to Home
+            </a>
             <div class="brand-container">
-                <img src="/pixelconvertlogo.png" alt="Pixel Convert Logo" class="brand-logo">
+                <img src="pixelconvertlogo.png" alt="Pixel Convert Logo" class="brand-logo">
                 <h1>Pixel Convert</h1>
             </div>
             <div class="theme-switch-container">
