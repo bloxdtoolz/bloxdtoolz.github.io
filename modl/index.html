@@ -1,0 +1,1840 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ModL Convert | BloxdTools</title>
+    <link rel="icon" type="image/jpg" href="favicon.jpg" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root {
+            --primary: #00BF63;
+            --primary-dark: #008F4A;
+            --bg-dark: #0f1012;
+            --panel-bg: rgba(20, 22, 26, 0.95);
+            --border: #333333;
+            --text-main: #ffffff;
+            --text-muted: #888888;
+            --topbar-bg: #0b0d12;
+            --card-bg: #1a1b1e;
+            --summary-bg: #25262b;
+            --range-track: #333333;
+            --btn-text: #000000;
+        }
+
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden !important;
+            background-color: var(--bg-dark);
+            font-family: 'Inter', sans-serif;
+            color: var(--text-main);
+            overscroll-behavior: none;
+        }
+
+        #app-wrapper {
+            display: flex;
+            flex-direction: column;
+            width: 100vw;
+            height: 100vh;
+        }
+
+        /* Top Navigation Bar */
+        #topbar {
+            height: 52px;
+            background: var(--topbar-bg);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+            z-index: 200;
+            flex-shrink: 0;
+            position: relative;
+        }
+
+        .topbar-left {
+            display: flex;
+            align-items: center;
+        }
+
+        .back-btn {
+            background: rgba(125, 125, 125, 0.1);
+            border: 1px solid var(--border);
+            color: var(--text-main);
+            padding: 6px 14px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            width: auto;
+            text-transform: none;
+            letter-spacing: normal;
+        }
+
+        .back-btn:hover {
+            background: rgba(125, 125, 125, 0.2);
+        }
+
+        .topbar-center {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .topbar-logo {
+            width: 26px;
+            height: 26px;
+            object-fit: contain;
+        }
+
+        .topbar-title {
+            margin: 0;
+            font-size: 1.25rem;
+            font-weight: 800;
+            color: var(--text-main);
+            display: flex;
+            align-items: center;
+        }
+
+        .topbar-right {
+            display: flex;
+            align-items: center;
+        }
+
+        .badge {
+            font-size: 0.75rem;
+            background: #222;
+            color: var(--primary);
+            padding: 4px 8px;
+            border-radius: 4px;
+            border: 1px solid #333;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+
+        #app {
+            display: flex;
+            flex: 1;
+            width: 100vw;
+            height: calc(100vh - 52px);
+            overflow: hidden;
+        }
+
+        #sidebar {
+            width: 380px;
+            min-width: 380px;
+            background: var(--panel-bg);
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+            box-shadow: 5px 0 30px rgba(0, 0, 0, 0.15);
+        }
+
+        .sidebar-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 25px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .sidebar-footer {
+            padding: 20px 25px;
+            background: var(--topbar-bg);
+            border-top: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .upload-box {
+            border: 2px dashed var(--border);
+            border-radius: 12px;
+            padding: 30px 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            background: rgba(125, 125, 125, 0.03);
+            position: relative;
+        }
+
+        .upload-box:hover {
+            border-color: var(--primary);
+            background: rgba(0, 191, 99, 0.05);
+        }
+
+        .upload-box input {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            cursor: pointer;
+        }
+
+        .upload-icon {
+            font-size: 24px;
+            color: var(--text-muted);
+            margin-bottom: 10px;
+        }
+
+        .upload-text {
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .upload-sub {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+
+        .control-group {
+            margin-bottom: 5px;
+        }
+
+        .control-label {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-main);
+            margin-bottom: 8px;
+        }
+
+        input[type="range"] {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 6px;
+            background: var(--range-track);
+            border-radius: 3px;
+            outline: none;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 18px;
+            height: 18px;
+            background: var(--primary);
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 0 10px rgba(0, 191, 99, 0.4);
+            border: 2px solid #fff;
+        }
+
+        details {
+            background: var(--card-bg);
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            overflow: hidden;
+        }
+
+        summary {
+            padding: 12px 15px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-main);
+            background: var(--summary-bg);
+            list-style: none;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        summary::-webkit-details-marker {
+            display: none;
+        }
+
+        summary::after {
+            font-family: "Font Awesome 6 Free";
+            font-weight: 900;
+            content: "\f078"; 
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        details:not([open]) summary::after {
+            content: "\f077"; 
+        }
+
+        .details-content {
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .rotation-buttons {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 6px;
+        }
+
+        .rotation-buttons button {
+            padding: 8px 4px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            background: var(--summary-bg);
+            color: var(--text-main);
+            font-size: 0.72rem;
+        }
+
+        .rotation-hint {
+            color: var(--text-muted);
+            font-size: 0.72rem;
+            line-height: 1.35;
+        }
+
+        .toggle-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 0.85rem;
+            color: var(--text-main);
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 40px;
+            height: 22px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--range-track);
+            transition: .3s;
+            border-radius: 22px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 16px;
+            width: 16px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: .3s;
+            border-radius: 50%;
+        }
+
+        input:checked+.slider {
+            background-color: var(--primary);
+        }
+
+        input:checked+.slider:before {
+            transform: translateX(18px);
+        }
+
+        button {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: transform 0.1s, filter 0.2s;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        button:active {
+            transform: scale(0.98);
+        }
+
+        #genBtn {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: var(--btn-text);
+            box-shadow: 0 4px 15px rgba(0, 191, 99, 0.2);
+        }
+
+        #genBtn:hover {
+            filter: brightness(1.1);
+        }
+
+        #exportRLEBtn {
+            background: var(--card-bg);
+            color: var(--text-main);
+            border: 1px solid var(--border);
+        }
+
+        #exportRLEBtn:hover {
+            filter: brightness(1.2);
+        }
+
+        .stats-box {
+            font-size: 0.75rem;
+            font-family: monospace;
+            color: var(--text-muted);
+            text-align: center;
+            margin-top: 5px;
+        }
+
+        #canvas-container {
+            flex: 1;
+            position: relative;
+            background-color: #170e29;
+            background-image: radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.1) 1px, transparent 1px);
+            background-size: 30px 30px;
+        }
+
+        canvas {
+            display: block;
+            width: 100%;
+            height: 100%;
+            outline: none;
+        }
+
+        #loading {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(5px);
+            z-index: 999;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .loading-card {
+            background: var(--card-bg);
+            padding: 40px;
+            border-radius: 16px;
+            border: 1px solid var(--border);
+            width: 300px;
+            text-align: center;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+        }
+
+        .progress-track {
+            width: 100%;
+            height: 6px;
+            background: var(--range-track);
+            border-radius: 3px;
+            margin: 20px 0;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            width: 0%;
+            background: var(--primary);
+            transition: width 0.2s;
+        }
+
+        .progress-text {
+            color: var(--text-main);
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+        .sub-text {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            margin-top: 5px;
+        }
+        .sidebar-content > * { flex-shrink: 0; }
+        .parts-list { display: flex; flex-direction: column; gap: 2px; max-height: 220px; overflow-y: auto; margin-bottom: 8px; }
+        .part-row { display: flex; align-items: center; gap: 8px; font-size: 12px; padding: 4px 2px; cursor: pointer; }
+        .part-row input { accent-color: var(--primary); }
+        .part-name { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .part-note { color: var(--text-muted); font-size: 11px; white-space: nowrap; }
+    </style>
+
+    <script type="importmap">
+            { "imports": { "three": "https://unpkg.com/three@0.160.0/build/three.module.js", "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/" } }
+        </script>
+</head>
+
+<body>
+
+    <div id="topbar">
+            <div class="topbar-left">
+                <a href="https://bloxdtoolz.github.io" target="_self" class="back-btn"><i class="fa-solid fa-arrow-left"></i> Back to Home</a>
+            </div>
+            <div class="topbar-center">
+                <img src="modlconvertlogo.png" alt="Logo" class="topbar-logo">
+                <h2 class="topbar-title">ModL Convert</h2>
+            </div>
+            <div class="topbar-right">
+                <span class="badge">ULTRA</span>
+            </div>
+        </div>
+
+        <div id="app">
+            <div id="sidebar">
+                <div class="sidebar-content">
+                    <div class="upload-box">
+                        <input type="file" id="fileInput" accept=".glb,.gltf">
+                        <div class="upload-icon"><i class="fa-solid fa-folder-open"></i></div>
+                        <div class="upload-text" id="fileNameDisplay">Click or Drop GLB File</div>
+                        <div class="upload-sub">Supports .glb and .gltf</div>
+                    </div>
+                    <div class="control-group">
+                        <div class="control-label"><span><i class="fa-solid fa-sliders"></i> Resolution</span><span id="resDisplay"
+                                style="color:var(--primary);">100</span></div>
+                        <input type="range" id="resolution" min="30" max="300" value="100">
+                    </div>
+                    <div class="control-group">
+                        <div class="control-label"><span><i class="fa-solid fa-bullseye"></i> Min Block Score</span><span id="minScoreDisplay" style="color:var(--primary);">70</span></div>
+                        <input type="range" id="minScore" min="0" max="100" value="70">
+                        <div class="rotation-hint" id="paletteInfo">Loading block colours…</div>
+                    </div>
+                    <details open>
+                        <summary><i class="fa-solid fa-rotate"></i> Model Rotation</summary>
+                        <div class="details-content">
+                            <div class="control-group">
+                                <div class="control-label"><span>X Axis</span><span id="rotationXDisplay" style="color:var(--primary);">0&deg;</span></div>
+                                <input type="range" id="rotationX" min="-180" max="180" step="1" value="0">
+                            </div>
+                            <div class="control-group">
+                                <div class="control-label"><span>Y Axis</span><span id="rotationYDisplay" style="color:var(--primary);">0&deg;</span></div>
+                                <input type="range" id="rotationY" min="-180" max="180" step="1" value="0">
+                            </div>
+                            <div class="control-group">
+                                <div class="control-label"><span>Z Axis</span><span id="rotationZDisplay" style="color:var(--primary);">0&deg;</span></div>
+                                <input type="range" id="rotationZ" min="-180" max="180" step="1" value="0">
+                            </div>
+                            <div class="rotation-buttons">
+                                <button type="button" data-rotate-axis="x">X +90</button>
+                                <button type="button" data-rotate-axis="y">Y +90</button>
+                                <button type="button" data-rotate-axis="z">Z +90</button>
+                                <button type="button" id="resetRotation">Reset</button>
+                            </div>
+                            <div class="rotation-hint">Rotation is applied to the complete model and included in the preview and export.</div>
+                        </div>
+                    </details>
+                    <details id="partsPanel" hidden>
+                        <summary><i class="fa-solid fa-puzzle-piece"></i> Model Parts <span id="partsCount" style="color:var(--primary);float:right;margin-right:18px;"></span></summary>
+                        <div class="details-content"><div id="partsList" class="parts-list"></div>
+                            <div class="rotation-hint">Untick parts you do not want in the build. Flat ground and shadow planes are hidden automatically.</div></div>
+                    </details>
+                    <details>
+                        <summary><i class="fa-solid fa-eye"></i> Visual Settings</summary>
+                        <div class="details-content">
+                            <div class="control-group">
+                                <div class="control-label">Exposure</div>
+                                <input type="range" id="exposureSlider" min="0.5" max="3.0" step="0.1" value="1.5">
+                            </div>
+                            <div class="toggle-row"><span>Show Block Colours</span><label class="switch"><input type="checkbox"
+                                        id="blockPreview" checked><span class="slider"></span></label></div>
+                            <div class="toggle-row"><span>Show Floor Grid</span><label class="switch"><input type="checkbox"
+                                        id="showGrid" checked><span class="slider"></span></label></div>
+                            <div class="toggle-row"><span>Show Chunk Borders</span><label class="switch"><input
+                                        type="checkbox" id="showChunks"><span class="slider"></span></label></div>
+                            <div class="toggle-row"><span>Show Voxel Borders</span><label class="switch"><input
+                                        type="checkbox" id="showBorders"><span class="slider"></span></label></div>
+                        </div>
+                    </details>
+                    <details>
+                        <summary><i class="fa-solid fa-gears"></i> Advanced Engine</summary>
+                        <div class="details-content">
+                            <div class="toggle-row"><span>Flip Y-Axis</span><label class="switch"><input type="checkbox"
+                                        id="flipY" checked><span class="slider"></span></label></div>
+                            <div class="toggle-row"><span>Chunk Centering</span><label class="switch"><input type="checkbox"
+                                        id="optimizeChunks" checked><span class="slider"></span></label></div>
+                            <div class="toggle-row"><span>Roof Priority Fix</span><label class="switch"><input
+                                        type="checkbox" id="roofBias" checked><span class="slider"></span></label></div>
+                            <div class="toggle-row"><span>Topology Check</span><label class="switch"><input type="checkbox"
+                                        id="topologyCheck" checked><span class="slider"></span></label></div>
+                            <div class="toggle-row"><span>Glass Transparency</span><label class="switch"><input
+                                        type="checkbox" id="enableGlass" checked><span class="slider"></span></label></div>
+                        </div>
+                    </details>
+                </div>
+                <div class="sidebar-footer">
+                    <button id="genBtn"><i class="fa-solid fa-play"></i> Generate Preview</button>
+                    <button id="exportRLEBtn"><i class="fa-solid fa-download"></i> Download Schematic</button>
+                    <div class="stats-box" id="chunkStats">Your Dimensions will appear here.</div>
+                </div>
+            </div>
+            <div id="canvas-container"></div>
+        </div>
+    </div>
+
+    <div id="loading">
+        <div class="loading-card">
+            <div class="progress-text" id="progressNumbers">0%</div>
+            <div class="progress-track">
+                <div class="progress-fill" id="progressBar"></div>
+            </div>
+            <div class="sub-text" id="progressState">Initializing...</div>
+        </div>
+    </div>
+
+    <script src="avsc.js"></script>
+    <script src="block01.js"></script>
+
+    <script type="module">
+        const Buffer = globalThis.Buffer || avsc.Type.forSchema('int').toBuffer(0).constructor;
+        class Bloxdschem {
+    constructor(options) {
+        if (options instanceof ArrayBuffer || options instanceof Uint8Array || (typeof Buffer !== 'undefined' && Buffer.isBuffer(options))) {
+            this.rawBuffer = options;
+            options = {}; 
+        } else {
+            this.rawArray = options.array;
+        }
+        
+        this.name = options.name || "0x00"; 
+        this.offX = options.x || 12;
+        this.offY = options.y || 20;
+        this.offZ = options.z || 11;
+        this.globalX = options.globalX || 0;
+        this.globalY = options.globalY || 0;
+        this.globalZ = options.globalZ || 0;
+
+        let h = options.headers !== undefined ? options.headers : 4;
+        this.headerBuffer = new Buffer([h, 0, 0, 0]);
+
+        this.schema = avsc.Type.forSchema({
+            type: "record",
+            name: "Schematic",
+            fields: [
+                { name: "headers", type: { name: "headers", type: "fixed", size: 4 } },
+                { name: "name", type: "string" },
+                { name: "x", type: "int" }, { name: "y", type: "int" }, { name: "z", type: "int" },
+                { name: "width", type: "int" }, { name: "height", type: "int" }, { name: "length", type: "int" },
+                {
+                    name: "chunks",
+                    type: {
+                        type: "array",
+                        items: {
+                            type: "record",
+                            name: "chunk",
+                            fields: [
+                                { name: "x", type: "int" }, { name: "y", type: "int" }, { name: "z", type: "int" },
+                                { name: "blocks", type: "bytes" }
+                            ]
+                        }
+                    }
+                },
+                { name: "blockdatas", type: { type: "array", items: { type: "record", name: "blockdata", fields: [ { name: "blockX", type: "int" }, { name: "blockY", type: "int" }, { name: "blockZ", type: "int" }, { name: "blockdataStr", type: "string" } ] } }, default: [] },
+                { name: "globalX", type: "int", default: 0 }, { name: "globalY", type: "int", default: 0 }, { name: "globalZ", type: "int", default: 0 },
+                { name: "worldcode", type: ["null", { type: "record", name: "worldcode", fields: [ { name: "code", type: "string", default: "" }, { name: "dbId", type: "string", default: "" }, { name: "someint", type: "int", default: 0 }, { name: "someotherint", type: "int", default: 0 } ] }], default: null },
+                { name: "somebool", type: "boolean", default: false }
+            ]
+        });
+    }
+
+    _decodeVarInt(buf, ref) {
+        let result = 0;
+        let shift = 0;
+        let byte;
+        do {
+            byte = buf[ref.offset++];
+            result |= (byte & 0x7F) << shift;
+            shift += 7;
+        } while (byte >= 0x80);
+        return result;
+    }
+
+    toJsonArr() {
+        if (!this.rawBuffer) throw new Error("No buffer found.");
+
+        let buf = (this.rawBuffer instanceof ArrayBuffer || this.rawBuffer instanceof Uint8Array) && typeof Buffer !== 'undefined' && !Buffer.isBuffer(this.rawBuffer)
+            ? Buffer.from(this.rawBuffer) 
+            : this.rawBuffer;
+
+        let schematic = this.schema.decode(buf).value; 
+
+        let W = schematic.width;
+        let H = schematic.height;
+        let L = schematic.length;
+        let offX = schematic.x;
+        let offY = schematic.y;
+        let offZ = schematic.z;
+
+        let data = Array.from({length: L}, () => 
+            Array.from({length: H}, () => new Array(W).fill(0))
+        );
+
+        for (let chunk of schematic.chunks) {
+            let cx = chunk.x;
+            let cy = chunk.y;
+            let cz = chunk.z;
+            let chunkBuf = chunk.blocks;
+            
+            let flatBlocks = [];
+            let ref = { offset: 0 };
+            while (ref.offset < chunkBuf.length) {
+                let count = this._decodeVarInt(chunkBuf, ref);
+                let value = this._decodeVarInt(chunkBuf, ref);
+                for (let i = 0; i < count; i++) {
+                    flatBlocks.push(value);
+                }
+            }
+
+            let rotatedChunk3D = Array.from({length: 32}, () => 
+                Array.from({length: 32}, () => new Array(32).fill(0))
+            );
+            
+            let idx = 0;
+            for (let z = 0; z < 32; z++) {
+                for (let y = 0; y < 32; y++) {
+                    for (let x = 0; x < 32; x++) {
+                        rotatedChunk3D[z][y][x] = flatBlocks[idx++];
+                    }
+                }
+            }
+
+            let chunk3D = Array.from({length: 32}, () => 
+                Array.from({length: 32}, () => new Array(32).fill(0))
+            );
+            for (let lz = 0; lz < 32; lz++) {
+                for (let ly = 0; ly < 32; ly++) {
+                    for (let lx = 0; lx < 32; lx++) {
+                        chunk3D[lz][ly][lx] = rotatedChunk3D[lx][ly][lz];
+                    }
+                }
+            }
+
+            for (let lz = 0; lz < 32; lz++) {
+                for (let ly = 0; ly < 32; ly++) {
+                    for (let lx = 0; lx < 32; lx++) {
+                        let gx = cx * 32 + lx;
+                        let gy = cy * 32 + ly;
+                        let gz = cz * 32 + lz;
+
+                        if (gx >= offX && gx < offX + W &&
+                            gy >= offY && gy < offY + H &&
+                            gz >= offZ && gz < offZ + L) {
+                            
+                            data[gz - offZ][gy - offY][gx - offX] = chunk3D[lz][ly][lx];
+                        }
+                    }
+                }
+            }
+        }
+
+        if (schematic.blockdatas && schematic.blockdatas.length > 0) {
+            for (let bd of schematic.blockdatas) {
+                let x = bd.blockX;
+                let y = bd.blockY;
+                let z = bd.blockZ;
+                
+                if (z >= 0 && z < L && y >= 0 && y < H && x >= 0 && x < W) {
+                    let id = data[z][y][x];
+                    data[z][y][x] = [id, bd.blockdataStr];
+                }
+            }
+        }
+
+        return data;
+    }
+
+    _encodeVarInt(i) {
+        let u = [];
+        for (; i >= 128; ) {
+            let h = i & 127 | 128;
+            u.push(h);
+            i >>>= 7;
+        }
+        u.push(i);
+        return u;
+    }
+
+    toArrayBuffer() {
+        const data = this.rawArray;
+        
+        const L = data.length;        
+        const H = data[0].length;     
+        const W = data[0][0].length;  
+
+        const blockdatas = [];
+        const schematic = {
+            headers: this.headerBuffer,
+            name: this.name,
+            x: this.offX, y: this.offY, z: this.offZ,
+            width: W, height: H, length: L,
+            chunks: [],
+            blockdatas: blockdatas,
+            globalX: this.globalX, globalY: this.globalY, globalZ: this.globalZ,
+            worldcode: null,
+            somebool: false
+        };
+
+        let minCX = Math.floor(this.offX / 32);
+        let maxCX = Math.floor((this.offX + W - 1) / 32);
+        let minCY = Math.floor(this.offY / 32);
+        let maxCY = Math.floor((this.offY + H - 1) / 32);
+        let minCZ = Math.floor(this.offZ / 32);
+        let maxCZ = Math.floor((this.offZ + L - 1) / 32);
+
+        for (let cx = minCX; cx <= maxCX; cx++) {
+            for (let cy = minCY; cy <= maxCY; cy++) {
+                for (let cz = minCZ; cz <= maxCZ; cz++) {
+                    
+                    let chunk3D = Array.from({length: 32}, () => 
+                        Array.from({length: 32}, () => new Array(32).fill(0))
+                    );
+
+                    for (let lz = 0; lz < 32; lz++) {
+                        for (let ly = 0; ly < 32; ly++) {
+                            for (let lx = 0; lx < 32; lx++) {
+                                let gx = cx * 32 + lx;
+                                let gy = cy * 32 + ly;
+                                let gz = cz * 32 + lz;
+
+                                if (gx >= this.offX && gx < this.offX + W &&
+                                    gy >= this.offY && gy < this.offY + H &&
+                                    gz >= this.offZ && gz < this.offZ + L) {
+
+                                    let cell = data[gz - this.offZ][gy - this.offY][gx - this.offX];
+                                    let id = 0;
+                                    if (Array.isArray(cell)) {
+                                        id = cell[0];
+                                        blockdatas.push({ blockX: gx - this.offX, blockY: gy - this.offY, blockZ: gz - this.offZ, blockdataStr: cell[1] });
+                                    } else {
+                                        id = cell || 0;
+                                    }
+                                    chunk3D[lz][ly][lx] = id;
+                                }
+                            }
+                        }
+                    }
+
+                    let rotatedChunk3D = Array.from({length: 32}, () => 
+                        Array.from({length: 32}, () => new Array(32).fill(0))
+                    );
+
+                    for (let lz = 0; lz < 32; lz++) {
+                        for (let ly = 0; ly < 32; ly++) {
+                            for (let lx = 0; lx < 32; lx++) {
+                                rotatedChunk3D[lx][ly][lz] = chunk3D[lz][ly][lx];
+                            }
+                        }
+                    }
+
+                    let flatBlocks = [];
+                    for (let z = 0; z < 32; z++) {
+                        for (let y = 0; y < 32; y++) {
+                            for (let x = 0; x < 32; x++) {
+                                flatBlocks.push(rotatedChunk3D[z][y][x]);
+                            }
+                        }
+                    }
+
+                    let encoded = [];
+                    if (flatBlocks.length > 0) {
+                        let v = flatBlocks[0];
+                        let b = 1;
+                        for (let i = 1; i <= flatBlocks.length; i++) {
+                            if (i < flatBlocks.length && flatBlocks[i] === v) {
+                                b++;
+                            } else {
+                                encoded.push(...this._encodeVarInt(b));
+                                encoded.push(...this._encodeVarInt(v));
+                                if (i < flatBlocks.length) { b = 1; v = flatBlocks[i]; }
+                            }
+                        }
+                    }
+
+                    schematic.chunks.push({
+                        x: cx, y: cy, z: cz,
+                        blocks: new Buffer(encoded)
+                    });
+                }
+            }
+        }
+        return this.schema.toBuffer(schematic);
+    }
+}
+
+        import * as THREE from 'three';
+        import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+        import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+        import { DRACOLoader } from 'three/addons/loaders/DRACOLoader.js';
+        import { KTX2Loader } from 'three/addons/loaders/KTX2Loader.js';
+        import { MeshoptDecoder } from 'three/addons/libs/meshopt_decoder.module.js';
+
+        document.getElementById('fileInput').addEventListener('change', function (e) {
+            if (e.target.files[0]) {
+                document.getElementById('fileNameDisplay').innerText = e.target.files[0].name;
+                document.getElementById('fileNameDisplay').style.color = 'var(--primary)';
+            }
+        });
+
+        function log(msg) { console.log("[App]", msg); }
+        const Module = {};
+
+        const solidBlockColors = { "Red Concrete": "#8F2324", "Green Concrete": "#485B28", "Brown Concrete": "#613C23", "Blue Concrete": "#30308D", "Cyan Concrete": "#147786", "Purple Concrete": "#67239A", "Black Concrete": "#090B10", "Pink Concrete": "#D7678F", "Lime Concrete": "#5CA92D", "Yellow Concrete": "#F2B034", "Light Blue Concrete": "#278AC5", "Magenta Concrete": "#AA339D", "Orange Concrete": "#E1621E", "White Concrete": "#D0D6D7", "Pink Baked Clay": "#A24F50", "Lime Baked Clay": "#66753A", "Brown Chalk": "#B6A498", "Red Chalk": "#F38689", "Green Chalk": "#9EB395", "Light Blue Chalk": "#A0C4E5", "Purple Chalk": "#C19CC6", "Blue Chalk": "#84A7DB", "Cyan Chalk": "#ACDBD2", "Black Chalk": "#2B3942", "Light Gray Chalk": "#B6CECC", "Gray Chalk": "#6F8089", "Pink Chalk": "#F8AEC6", "Orange Chalk": "#F2A188", "Gray Baked Clay": "#3A2A25", "Cyan Baked Clay": "#555A5A", "Blue Baked Clay": "#493B5A", "White Baked Clay": "#D2B1A2", "Brown Baked Clay": "#4D3224", "Green Baked Clay": "#4B522B", "Black Baked Clay": "#241510", "Orange Baked Clay": "#A2542D", "Yellow Baked Clay": "#BA8532", "Purple Baked Clay": "#764756", "Magenta Baked Clay": "#95586C", "Light Gray Baked Clay": "#876B63", "Light Blue Baked Clay": "#706C89", "Smooth Sandstone": "#E6DEB4", "Yellow Chalk": "#FCF4B8", "Block of Coal": "#131313", "Light Gray Concrete": "#7D7D74", "Gray Concrete": "#373A3E", "Smooth Red Sandstone": "#CB6F30", "Magenta Chalk": "#E7A4DE", "Baked Clay": "#965D46", "Brown Mushroom Block": "#C1977A", "Snow": "#E6EBEB", "White Chalk": "#E1F7F8" };
+        const rawGlassData = { "glass": "rgba(198,230,229,255)", "glass_black": "rgba(23,26,32,255)", "glass_blue": "rgba(101,134,207,255)", "glass_brown": "rgba(154,118,91,255)", "glass_cyan": "rgba(31,145,164,255)", "glass_gray": "rgba(86,90,93,255)", "glass_green": "rgba(105,125,62,255)", "glass_light_blue": "rgba(135,187,242,255)", "glass_light_gray": "rgba(179,183,187,255)", "glass_lime": "rgba(188,226,152,255)", "glass_magenta": "rgba(193,73,183,255)", "glass_orange": "rgba(242,151,82,255)", "glass_pink": "rgba(242,157,188,255)", "glass_purple": "rgba(126,63,177,255)", "glass_red": "rgba(182,56,56,255)", "glass_white": "rgba(245,246,246,255)", "glass_yellow": "rgba(248,214,135,255)" };
+
+        function parseRgbaToHex(rgbaStr) {
+            const parts = rgbaStr.match(/rgba?\((\d+),(\d+),(\d+)/); if (!parts) return null;
+            return "#" + ((1 << 24) + (parseInt(parts[1]) << 16) + (parseInt(parts[2]) << 8) + parseInt(parts[3])).toString(16).slice(1).toUpperCase();
+        }
+        function formatColorName(str) { return str.split('_').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' '); }
+        const normalGlassColors = {}; Object.entries(rawGlassData).forEach(([k, v]) => { const h = parseRgbaToHex(v); if (h) normalGlassColors[`${formatColorName(k.replace("glass_", ""))} Glass`] = h; });
+
+        function hexToRgb(hex) { hex = hex.replace("#", ""); if (hex.length === 3) hex = hex.split("").map(c => c + c).join(""); const n = parseInt(hex, 16); return { r: (n >> 16) & 255, g: (n >> 8) & 255, b: n & 255 }; }
+        function rgbToLab(rgb) {
+            let r = rgb.r / 255, g = rgb.g / 255, b = rgb.b / 255; r = r > 0.04045 ? Math.pow((r + 0.055) / 1.055, 2.4) : r / 12.92; g = g > 0.04045 ? Math.pow((g + 0.055) / 1.055, 2.4) : g / 12.92; b = b > 0.04045 ? Math.pow((b + 0.055) / 1.055, 2.4) : b / 12.92;
+            let x = (r * 0.4124 + g * 0.3576 + b * 0.1805) * 100, y = (r * 0.2126 + g * 0.7152 + b * 0.0722) * 100, z = (r * 0.0193 + g * 0.1192 + b * 0.9505) * 100;
+            x /= 95.047; y /= 100.000; z /= 108.883; x = x > 0.008856 ? Math.cbrt(x) : (7.787 * x) + 16 / 116; y = y > 0.008856 ? Math.cbrt(y) : (7.787 * y) + 16 / 116; z = z > 0.008856 ? Math.cbrt(z) : (7.787 * z) + 16 / 116;
+            return { l: (116 * y) - 16, a: 500 * (x - y), b: 200 * (y - z) };
+        }
+        function deltaE(l1, l2) { return Math.sqrt(Math.pow(l1.l - l2.l, 2) + Math.pow(l1.a - l2.a, 2) + Math.pow(l1.b - l2.b, 2)); }
+        const paletteLabs = new Map(), bestBlockCache = new Map();
+        Module.getBestBlockFor = function (hex, alpha) {
+            const map = alpha === 0 ? solidBlockColors : normalGlassColors;
+            const signature = (alpha === 0 ? 's' : 'g') + Object.keys(map).length;
+            const cacheKey = signature + hex;
+            if (bestBlockCache.has(cacheKey)) return bestBlockCache.get(cacheKey);
+            if (!paletteLabs.has(signature)) paletteLabs.set(signature, Object.entries(map).map(([n, h]) => [n, rgbToLab(hexToRgb(h))]));
+            const lab1 = rgbToLab(hexToRgb(hex));
+            let best = "Unknown", min = Infinity;
+            for (const [n, lab] of paletteLabs.get(signature)) {
+                const diff = deltaE(lab1, lab);
+                if (diff < min) { min = diff; best = n; }
+            }
+            bestBlockCache.set(cacheKey, best);
+            return best;
+        };
+        function rgbToHex(r, g, b) { return "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1).toUpperCase(); }
+        const SERVER_URL = 'https://happyserver.app/file-broadcaster';
+        const fileCache = {};
+        const blockIds = {};
+        const scoredBlocks = {};
+        let scoredGlass = null;
+        function applyMinScore(minScore) {
+            const solids = Object.fromEntries(Object.entries(scoredBlocks).filter(([, b]) => b.score >= minScore).map(([name, b]) => [name, b.color]));
+            if (Object.keys(scoredBlocks).length >= 10) { for (const key of Object.keys(solidBlockColors)) delete solidBlockColors[key]; Object.assign(solidBlockColors, solids); }
+            if (scoredGlass) { for (const key of Object.keys(normalGlassColors)) delete normalGlassColors[key]; Object.assign(normalGlassColors, scoredGlass); }
+            paletteLabs.clear(); bestBlockCache.clear();
+            const info = document.getElementById('paletteInfo');
+            if (info) info.textContent = Object.keys(scoredBlocks).length ? `${Object.keys(solidBlockColors).length} blocks + ${Object.keys(normalGlassColors).length} glass` : 'Loading block colours…';
+        }
+        async function fetchAssets(list) {
+            const missing = list.filter(n => !fileCache[n]);
+            if (missing.length === 0) return;
+            const encoder = new TextEncoder();
+            let total = 0;
+            const encoded = missing.map(n => { const b = encoder.encode(n); total += 1 + b.length; return b; });
+            const buf = new Uint8Array(total);
+            let off = 0;
+            encoded.forEach(b => { buf[off] = b.length; buf.set(b, off + 1); off += 1 + b.length; });
+            const res = await fetch(SERVER_URL, { method: 'POST', body: buf });
+            const resBuf = await res.arrayBuffer();
+            const dv = new DataView(resBuf);
+            let resOff = 0;
+            for (const name of missing) {
+                const len = dv.getUint32(resOff, false);
+                fileCache[name] = resBuf.slice(resOff + 4, resOff + 4 + len);
+                resOff += 4 + len;
+            }
+        }
+        const textureFile = t => (typeof t === 'string' ? t.split('[rot[')[0] : t?.animTextures?.[0]) + '.png';
+        const paletteCanvas = document.createElement('canvas'); paletteCanvas.width = paletteCanvas.height = 16;
+        const paletteCtx = paletteCanvas.getContext('2d', { willReadFrequently: true });
+        async function texturePixels(file) {
+            const bitmap = await createImageBitmap(new Blob([fileCache[file]], { type: 'image/png' }));
+            paletteCtx.clearRect(0, 0, 16, 16); paletteCtx.drawImage(bitmap, 0, 0, 16, 16); bitmap.close();
+            return paletteCtx.getImageData(0, 0, 16, 16).data;
+        }
+        function scoreBlock(pixelSets) {
+            const all = []; let sumR = 0, sumG = 0, sumB = 0;
+            for (const pix of pixelSets) for (let i = 0; i < pix.length; i += 4) {
+                if (pix[i + 3] < 255) return null;
+                sumR += pix[i]; sumG += pix[i + 1]; sumB += pix[i + 2];
+                const r = pix[i] / 255, g = pix[i + 1] / 255, b = pix[i + 2] / 255;
+                const max = Math.max(r, g, b), min = Math.min(r, g, b), d = max - min;
+                let h = 0;
+                if (d !== 0) { if (max === r) h = ((g - b) / d) % 6; else if (max === g) h = (b - r) / d + 2; else h = (r - g) / d + 4; }
+                h *= 60; if (h < 0) h += 360;
+                all.push({ h, s: max === 0 ? 0 : d / max, v: max });
+            }
+            if (!all.length) return null;
+            let sumSin = 0, sumCos = 0, sumS = 0, sumV = 0;
+            for (const p of all) { const rad = p.h * Math.PI / 180; sumSin += Math.sin(rad); sumCos += Math.cos(rad); sumS += p.s; sumV += p.v; }
+            const avgH = (Math.atan2(sumSin / all.length, sumCos / all.length) * 180 / Math.PI + 360) % 360, avgS = sumS / all.length, avgV = sumV / all.length;
+            let variance = 0;
+            for (const p of all) {
+                let hDiff = Math.abs(p.h - avgH); if (hDiff > 180) hDiff = 360 - hDiff;
+                let sDiff = Math.abs(p.s - avgS), vDiff = Math.abs(p.v - avgV) * 1.1;
+                if (hDiff < 5) hDiff = 0; if (sDiff < 0.05) sDiff = 0; if (vDiff < 0.05) vDiff = 0;
+                variance += Math.pow(hDiff / 180, 2) * 400 + Math.pow(sDiff, 2) * 200 + Math.pow(vDiff, 2) * 350;
+            }
+            const score = Math.max(0, Math.min(100, 100 - Math.sqrt(variance / all.length) * 22));
+            return { score, color: rgbToHex(Math.round(sumR / all.length), Math.round(sumG / all.length), Math.round(sumB / all.length)) };
+        }
+        function glassColor(pix) {
+            let r = 0, g = 0, b = 0, n = 0;
+            for (const [x, y] of [[0, 0], [15, 0], [0, 15], [15, 15]]) { const i = (y * 16 + x) * 4; if (pix[i + 3] < 8) continue; r += pix[i]; g += pix[i + 1]; b += pix[i + 2]; n++; }
+            return n ? rgbToHex(Math.round(r / n), Math.round(g / n), Math.round(b / n)) : null;
+        }
+        let paletteSource = 'built-in colours';
+        const paletteReady = (async () => {
+            try {
+                await fetchAssets(['blockDatas.xbmd']);
+                const str = new TextDecoder().decode(fileCache['blockDatas.xbmd']);
+                const xbmdData = JSON.parse(str.substring(str.indexOf('{'), str.lastIndexOf('}') + 1));
+                for (const [name, data] of Object.entries(xbmdData)) if (typeof data?.model === 'string' && data.model.trim().toLowerCase() === 'slab') delete xbmdData[name];
+                for (const key in xbmdData) {
+                    const d = xbmdData[key];
+                    if (d.meta?.rootName && xbmdData[d.meta.rootName]) {
+                        const root = xbmdData[d.meta.rootName];
+                        if (!d.textureInfo) d.textureInfo = root.textureInfo;
+                        if (!d.texturePerSide) d.texturePerSide = root.texturePerSide;
+                    }
+                }
+                const special = d => !(d.ttb > 0 && d.ttb < 1e9) || d.drops === null || /Portal|Unloaded|Absorb|Barrier|Invisible|Spawn|Chest|Furnace|Crafting|Workbench|Anvil|Table|Barrel|Hopper|TNT/i.test(d.name || '');
+                const valid = Object.keys(xbmdData).filter(k => !k.includes('|') && !k.startsWith('_') && !/^\d+$/.test(k) && !xbmdData[k].model && !xbmdData[k].blockModel && !special(xbmdData[k]));
+                const assets = new Set();
+                for (const name of valid) {
+                    const info = xbmdData[name].textureInfo;
+                    if (Array.isArray(info) && typeof info[0] !== 'number') info.forEach(t => assets.add(textureFile(t)));
+                    else if (typeof info === 'string' || info?.animTextures) assets.add(textureFile(info));
+                }
+                const assetList = [...assets].filter(a => a.length > 5 && !a.includes('undefined'));
+                for (let i = 0; i < assetList.length; i += 150) await fetchAssets(assetList.slice(i, i + 150));
+
+                const glasses = {};
+                for (const name of valid) {
+                    const d = xbmdData[name];
+                    if (Array.isArray(d.textureInfo) && typeof d.textureInfo[0] === 'number') {
+                        scoredBlocks[name] = { color: rgbToHex(...d.textureInfo.slice(0, 3).map(v => Math.round(v * 255))), score: 100 };
+                        blockIds[name] = d.id; continue;
+                    }
+                    const sides = d.texturePerSide ? [...new Set(d.texturePerSide)] : [0];
+                    const files = sides.map(i => textureFile(Array.isArray(d.textureInfo) ? d.textureInfo[i] : d.textureInfo)).filter(f => fileCache[f]?.byteLength);
+                    if (!files.length) continue;
+                    const pixels = await Promise.all(files.map(f => texturePixels(f).catch(() => null)));
+                    if (pixels.some(p => !p)) continue;
+                    if (/Glass$/.test(name)) {
+                        const color = glassColor(pixels[0]);
+                        if (color) { glasses[name] = color; blockIds[name] = d.id; }
+                        continue;
+                    }
+                    const result = scoreBlock(pixels);
+                    if (result) { scoredBlocks[name] = result; blockIds[name] = d.id; }
+                }
+                if (Object.keys(glasses).length >= 4) scoredGlass = glasses;
+                applyMinScore(parseFloat(document.getElementById('minScore').value));
+                paletteSource = `${Object.keys(scoredBlocks).length} blocks and ${Object.keys(normalGlassColors).length} glass colours from block data`;
+                recolorPreview();
+            } catch (error) {
+                console.warn('Block colours from the asset service are unavailable, using built-in colours:', error);
+            }
+            log('Palette: ' + paletteSource);
+        })();
+
+        const scene = new THREE.Scene();
+        scene.background = new THREE.Color(0x170e29);
+
+        const canvasContainer = document.getElementById('canvas-container');
+        let w = canvasContainer.clientWidth, h = canvasContainer.clientHeight;
+        const camera = new THREE.PerspectiveCamera(45, w / h, 0.01, 100000);
+        camera.position.set(60, 50, 60);
+
+        const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+        renderer.setSize(w, h);
+        renderer.setPixelRatio(window.devicePixelRatio || 1);
+        renderer.outputColorSpace = THREE.SRGBColorSpace;
+        renderer.toneMapping = THREE.ACESFilmicToneMapping;
+        renderer.toneMappingExposure = 1.5;
+        renderer.shadowMap.enabled = true;
+        renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+        renderer.autoClear = false;
+        canvasContainer.appendChild(renderer.domElement);
+
+        const controls = new OrbitControls(camera, renderer.domElement);
+        controls.enableDamping = true;
+        controls.dampingFactor = 0.05;
+        controls.enableZoom = false;
+
+        renderer.domElement.addEventListener('wheel', (e) => {
+            e.preventDefault(); e.stopPropagation();
+            let direction = 0; if (e.deltaY > 0) direction = 1; if (e.deltaY < 0) direction = -1;
+            if (direction === 0) return;
+            const t = controls.target, p = camera.position;
+            const d = p.distanceTo(t);
+            const v = new THREE.Vector3().subVectors(p, t).normalize();
+            const step = Math.max(d * 0.1, controls.minDistance * 0.25);
+            let nd = THREE.MathUtils.clamp(d + direction * step, controls.minDistance, controls.maxDistance);
+            p.copy(t).add(v.multiplyScalar(nd));
+            controls.update();
+        }, { passive: false });
+
+        const ambient = new THREE.AmbientLight(0xffffff, 0.4); scene.add(ambient);
+        const hemiLight = new THREE.HemisphereLight(0xffffff, 0x444444, 0.8); scene.add(hemiLight);
+        const dirLight = new THREE.DirectionalLight(0xffffff, 1.8);
+        dirLight.position.set(50, 80, 30); dirLight.castShadow = true;
+        dirLight.shadow.mapSize.width = 2048; dirLight.shadow.mapSize.height = 2048;
+        scene.add(dirLight);
+
+        const gridHelper = new THREE.GridHelper(500, 500, 0x00BF63, 0x2b1c47);
+        gridHelper.material.opacity = 0.3;
+        gridHelper.material.transparent = true;
+        gridHelper.position.y = -0.5;
+        scene.add(gridHelper);
+        document.getElementById('showGrid').addEventListener('change', e => gridHelper.visible = e.target.checked);
+
+        let viewCubeScene, viewCubeCamera, viewCubeMesh;
+        function initViewCube() {
+            viewCubeScene = new THREE.Scene();
+            viewCubeCamera = new THREE.PerspectiveCamera(50, 1, 0.1, 100);
+            viewCubeCamera.position.z = 5;
+            function makeTex(text) {
+                const cvs = document.createElement('canvas'); cvs.width = 128; cvs.height = 128;
+                const ctx = cvs.getContext('2d');
+                ctx.fillStyle = '#222'; ctx.fillRect(0, 0, 128, 128);
+                ctx.strokeStyle = '#00BF63'; ctx.lineWidth = 8; ctx.strokeRect(0, 0, 128, 128);
+                ctx.fillStyle = '#FFF'; ctx.font = 'bold 28px sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+                ctx.fillText(text, 64, 64);
+                return new THREE.CanvasTexture(cvs);
+            }
+            const mats = [
+                new THREE.MeshBasicMaterial({ map: makeTex("RIGHT") }), new THREE.MeshBasicMaterial({ map: makeTex("LEFT") }),
+                new THREE.MeshBasicMaterial({ map: makeTex("TOP") }), new THREE.MeshBasicMaterial({ map: makeTex("BOTTOM") }),
+                new THREE.MeshBasicMaterial({ map: makeTex("FRONT") }), new THREE.MeshBasicMaterial({ map: makeTex("BACK") })
+            ];
+            viewCubeMesh = new THREE.Mesh(new THREE.BoxGeometry(2, 2, 2), mats);
+            viewCubeScene.add(viewCubeMesh);
+        }
+        initViewCube();
+
+        let loadedScene = null;
+        let loadedModel = null;
+        let voxelMeshes = [];
+        let borderMesh = null;
+        let chunkGridMesh = null;
+        const loader = new GLTFLoader();
+        loader.setDRACOLoader(new DRACOLoader().setDecoderPath('https://unpkg.com/three@0.160.0/examples/jsm/libs/draco/gltf/'));
+        loader.setKTX2Loader(new KTX2Loader().setTranscoderPath('https://unpkg.com/three@0.160.0/examples/jsm/libs/basis/').detectSupport(renderer));
+        loader.setMeshoptDecoder(MeshoptDecoder);
+        let lastVoxelData = null;
+        const modelRotation = { x: 0, y: 0, z: 0 };
+
+        function getVertexWorldPosition(mesh, positionAttribute, index, target) {
+            target.fromBufferAttribute(positionAttribute, index);
+            if (mesh.isSkinnedMesh) mesh.applyBoneTransform(index, target);
+            return target.applyMatrix4(mesh.matrixWorld);
+        }
+
+        function getVisibleGeometryBounds(root) {
+            root.updateMatrixWorld(true);
+            const bounds = new THREE.Box3().makeEmpty();
+            const vertex = new THREE.Vector3();
+            root.traverse(child => {
+                if (!child.isMesh || child.visible === false) return;
+                const position = child.geometry?.attributes?.position;
+                if (!position) return;
+                if (child.isSkinnedMesh) child.skeleton.update();
+                for (let i = 0; i < position.count; i++) {
+                    bounds.expandByPoint(getVertexWorldPosition(child, position, i, vertex));
+                }
+            });
+            return bounds;
+        }
+
+        function applyModelRotation() {
+            if (!loadedScene) return;
+            loadedScene.rotation.set(
+                THREE.MathUtils.degToRad(modelRotation.x),
+                THREE.MathUtils.degToRad(modelRotation.y),
+                THREE.MathUtils.degToRad(modelRotation.z),
+                'XYZ'
+            );
+            loadedScene.updateMatrixWorld(true);
+        }
+
+        function updateRotationControls() {
+            for (const axis of ['x', 'y', 'z']) {
+                const upper = axis.toUpperCase();
+                document.getElementById(`rotation${upper}`).value = modelRotation[axis];
+                document.getElementById(`rotation${upper}Display`).innerHTML = `${modelRotation[axis]}&deg;`;
+            }
+            applyModelRotation();
+        }
+
+        for (const axis of ['x', 'y', 'z']) {
+            const upper = axis.toUpperCase();
+            const slider = document.getElementById(`rotation${upper}`);
+            slider.addEventListener('input', () => {
+                modelRotation[axis] = parseInt(slider.value, 10);
+                document.getElementById(`rotation${upper}Display`).innerHTML = `${modelRotation[axis]}&deg;`;
+                applyModelRotation();
+                document.getElementById('chunkStats').innerText = 'Rotation changed - generating preview...';
+            });
+            slider.addEventListener('change', generateVoxels);
+        }
+
+        document.querySelectorAll('[data-rotate-axis]').forEach(button => {
+            button.addEventListener('click', () => {
+                const axis = button.dataset.rotateAxis;
+                modelRotation[axis] += 90;
+                if (modelRotation[axis] > 180) modelRotation[axis] -= 360;
+                updateRotationControls();
+                generateVoxels();
+            });
+        });
+
+        document.getElementById('resetRotation').addEventListener('click', () => {
+            modelRotation.x = modelRotation.y = modelRotation.z = 0;
+            updateRotationControls();
+            generateVoxels();
+        });
+
+        document.getElementById('resolution').addEventListener('input', e => document.getElementById('resDisplay').innerText = e.target.value);
+        document.getElementById('exposureSlider').addEventListener('input', e => renderer.toneMappingExposure = parseFloat(e.target.value));
+        document.getElementById('showBorders').addEventListener('change', e => { if (borderMesh) borderMesh.visible = e.target.checked; });
+        document.getElementById('showChunks').addEventListener('change', e => { if (chunkGridMesh) chunkGridMesh.visible = e.target.checked; });
+
+        function looksLikeBackdrop(mesh, others) {
+            const size = new THREE.Box3().setFromObject(mesh).getSize(new THREE.Vector3());
+            const longest = Math.max(size.x, size.y, size.z), thinnest = Math.min(size.x, size.y, size.z);
+            const material = Array.isArray(mesh.material) ? mesh.material[0] : mesh.material;
+            const flat = thinnest <= longest * 0.002;
+            const helperLike = material?.transparent || material?.depthWrite === false || /plane|ground|floor|shadow|backdrop|background|stage/i.test(`${mesh.name} ${material?.name || ''}`);
+            const othersSize = others.isEmpty() ? 0 : Math.max(...others.getSize(new THREE.Vector3()).toArray());
+            return flat && helperLike && othersSize > 0 && longest > othersSize * 2.5;
+        }
+        function setupParts(model) {
+            const meshes = [];
+            model.traverse(child => { if (child.isMesh) meshes.push(child); });
+            model.updateMatrixWorld(true);
+            for (const mesh of meshes) {
+                const others = new THREE.Box3().makeEmpty();
+                for (const other of meshes) if (other !== mesh) others.expandByObject(other);
+                if (meshes.length > 1 && looksLikeBackdrop(mesh, others)) { mesh.visible = false; mesh.userData.autoHidden = true; }
+            }
+            const list = document.getElementById('partsList');
+            list.replaceChildren();
+            document.getElementById('partsCount').textContent = `${meshes.filter(m => m.visible).length} / ${meshes.length}`;
+            meshes.forEach((mesh, index) => {
+                const row = document.createElement('label'); row.className = 'part-row';
+                const box = document.createElement('input'); box.type = 'checkbox'; box.checked = mesh.visible;
+                const name = document.createElement('span'); name.className = 'part-name';
+                name.textContent = mesh.name || `Part ${index + 1}`;
+                const triangles = (mesh.geometry.index ? mesh.geometry.index.count : mesh.geometry.attributes.position.count) / 3;
+                const note = document.createElement('span'); note.className = 'part-note';
+                note.textContent = mesh.userData.autoHidden ? 'ground plane, hidden' : `${triangles.toLocaleString()} tris`;
+                box.addEventListener('change', () => {
+                    mesh.visible = box.checked;
+                    document.getElementById('partsCount').textContent = `${meshes.filter(m => m.visible).length} / ${meshes.length}`;
+                    generateVoxels();
+                });
+                row.append(box, name, note); list.appendChild(row);
+            });
+            document.getElementById('partsPanel').hidden = meshes.length < 2;
+        }
+
+        function previewColor(d, col, glass) {
+            if (document.getElementById('blockPreview').checked && Object.keys(scoredBlocks).length) {
+                const name = Module.getBestBlockFor(rgbToHex(Math.floor(d.r * 255), Math.floor(d.g * 255), Math.floor(d.b * 255)), glass ? 1 : 0);
+                const hex = (glass ? normalGlassColors : solidBlockColors)[name];
+                if (hex) { const c = hexToRgb(hex); col.setRGB(c.r / 255, c.g / 255, c.b / 255); col.convertSRGBToLinear(); return; }
+            }
+            col.setRGB(d.r, d.g, d.b); col.convertSRGBToLinear();
+        }
+        function recolorPreview() {
+            const col = new THREE.Color();
+            for (const mesh of voxelMeshes) {
+                const voxels = mesh.userData.voxels; if (!voxels || !mesh.instanceColor) continue;
+                voxels.forEach((d, i) => { previewColor(d, col, mesh.material.transparent); mesh.setColorAt(i, col); });
+                mesh.instanceColor.needsUpdate = true;
+            }
+        }
+        document.getElementById('minScore').addEventListener('input', e => {
+            document.getElementById('minScoreDisplay').innerText = e.target.value;
+            applyMinScore(parseFloat(e.target.value));
+            recolorPreview();
+        });
+        document.getElementById('blockPreview').addEventListener('change', recolorPreview);
+        const fileInput = document.getElementById('fileInput');
+        const loadingDiv = document.getElementById('loading');
+        const progressBar = document.getElementById('progressBar');
+        const progressNum = document.getElementById('progressNumbers');
+        const progressState = document.getElementById('progressState');
+
+        fileInput.addEventListener('change', (e) => {
+            const file = e.target.files[0]; if (!file) return;
+            loadingDiv.style.display = 'flex';
+            progressNum.innerText = "0%";
+            loader.load(URL.createObjectURL(file), (gltf) => {
+              try {
+                loadedModel = gltf.scene;
+                loadedModel.updateMatrixWorld(true);
+                setupParts(loadedModel);
+                const sourceBox = getVisibleGeometryBounds(loadedModel);
+                if (sourceBox.isEmpty()) throw new Error('The GLB contains no visible mesh geometry.');
+                const sourceCenter = sourceBox.getCenter(new THREE.Vector3());
+                loadedModel.position.sub(sourceCenter);
+                loadedScene = new THREE.Group();
+                loadedScene.add(loadedModel);
+                applyModelRotation();
+                loadingDiv.style.display = 'none';
+                generateVoxels();
+              } catch (error) { loadingDiv.style.display = 'none'; alert('Could not use this model: ' + error.message); }
+            }, undefined, (e) => { loadingDiv.style.display = 'none'; alert('Could not load this model: ' + (e?.message || e)); });
+        });
+
+        document.getElementById('genBtn').addEventListener('click', generateVoxels);
+
+        const textureDataCache = new Map();
+        function getTextureContext(texture) {
+            if (!texture) return null;
+            if (textureDataCache.has(texture.uuid)) return textureDataCache.get(texture.uuid);
+            let info = null;
+            const img = texture.image;
+            try {
+                if (img && !texture.isCompressedTexture && (img.width > 0) && (typeof ImageBitmap !== 'undefined' && img instanceof ImageBitmap || img instanceof HTMLImageElement || img instanceof HTMLCanvasElement || (typeof OffscreenCanvas !== 'undefined' && img instanceof OffscreenCanvas))) {
+                    const canvas = document.createElement('canvas');
+                    canvas.width = img.width; canvas.height = img.height;
+                    const ctx = canvas.getContext('2d', { willReadFrequently: true });
+                    ctx.drawImage(img, 0, 0);
+                    const data = ctx.getImageData(0, 0, img.width, img.height).data;
+                    info = { data, width: img.width, height: img.height, bottomUp: !texture.flipY ? false : true, linear: false };
+                } else if (img?.data && img.width && img.height && img.data.length >= img.width * img.height * 4 && img.data instanceof Uint8Array) {
+                    info = { data: img.data, width: img.width, height: img.height, bottomUp: false, linear: false };
+                } else {
+                    info = readTextureOnGpu(texture);
+                }
+            } catch (error) {
+                console.warn('Texture could not be read, using material colour:', error);
+                info = null;
+            }
+            textureDataCache.set(texture.uuid, info);
+            return info;
+        }
+        function readTextureOnGpu(texture) {
+            const width = Math.min(1024, texture.image?.width || texture.source?.data?.width || 256);
+            const height = Math.min(1024, texture.image?.height || texture.source?.data?.height || 256);
+            const target = new THREE.WebGLRenderTarget(width, height);
+            const blitScene = new THREE.Scene();
+            const material = new THREE.ShaderMaterial({
+                uniforms: { map: { value: texture } },
+                vertexShader: 'varying vec2 vUv; void main() { vUv = uv; gl_Position = vec4(position.xy * 2.0, 0.0, 1.0); }',
+                fragmentShader: 'uniform sampler2D map; varying vec2 vUv; void main() { gl_FragColor = texture2D(map, vUv); }'
+            });
+            blitScene.add(new THREE.Mesh(new THREE.PlaneGeometry(1, 1), material));
+            const previous = renderer.getRenderTarget();
+            renderer.setRenderTarget(target); renderer.render(blitScene, new THREE.Camera()); renderer.setRenderTarget(previous);
+            const data = new Uint8Array(width * height * 4);
+            renderer.readRenderTargetPixels(target, 0, 0, width, height, data);
+            target.dispose(); material.dispose();
+            return { data, width, height, bottomUp: false, linear: texture.colorSpace === THREE.SRGBColorSpace };
+        }
+        const srgbToLinear = c => c <= 0.04045 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4);
+        const linearToSrgb = c => c <= 0.0031308 ? c * 12.92 : 1.055 * Math.pow(c, 1 / 2.4) - 0.055;
+        function wrap(value, mode) {
+            if (mode === THREE.ClampToEdgeWrapping) return Math.min(1, Math.max(0, value));
+            if (mode === THREE.MirroredRepeatWrapping) { const period = ((value % 2) + 2) % 2; return period > 1 ? 2 - period : period; }
+            return ((value % 1) + 1) % 1;
+        }
+        const _uvSample = new THREE.Vector2();
+        function sampleTexture(texture, u, v, invert) {
+            const info = getTextureContext(texture);
+            if (!info) return null;
+            _uvSample.set(u, v);
+            if (texture.matrixAutoUpdate) texture.updateMatrix();
+            _uvSample.applyMatrix3(texture.matrix);
+            const su = wrap(_uvSample.x, texture.wrapS), sv = wrap(_uvSample.y, texture.wrapT);
+            const px = Math.min(info.width - 1, Math.floor(su * info.width));
+            let row = Math.min(info.height - 1, Math.floor(sv * info.height));
+            if (info.bottomUp !== invert) row = info.height - 1 - row;
+            const i = (row * info.width + px) * 4, d = info.data;
+            const decode = value => info.linear || texture.colorSpace !== THREE.SRGBColorSpace ? value / 255 : srgbToLinear(value / 255);
+            return [decode(d[i]), decode(d[i + 1]), decode(d[i + 2]), d[i + 3] / 255];
+        }
+        function uvName(texture) { return texture.channel ? `uv${texture.channel}` : 'uv'; }
+        const _ua = new THREE.Vector2(), _ub = new THREE.Vector2(), _uc = new THREE.Vector2();
+        function interpolateUv(geometry, texture, aIdx, bIdx, cIdx, wA, wB, wC) {
+            const attribute = geometry.attributes[uvName(texture)] || geometry.attributes.uv;
+            if (!attribute) return null;
+            _ua.fromBufferAttribute(attribute, aIdx); _ub.fromBufferAttribute(attribute, bIdx); _uc.fromBufferAttribute(attribute, cIdx);
+            return [wA * _ua.x + wB * _ub.x + wC * _uc.x, wA * _ua.y + wB * _ub.y + wC * _uc.y];
+        }
+        const _base = new THREE.Color(), _emissive = new THREE.Color();
+        function surfaceColor(mesh, material, aIdx, bIdx, cIdx, wA, wB, wC, invertTextures) {
+            if (!material || material.visible === false) return null;
+            const geometry = mesh.geometry;
+            _base.copy(material.color || _base.setRGB(1, 1, 1));
+            let r = _base.r, g = _base.g, b = _base.b;
+            let a = material.opacity ?? 1;
+            if (material.map) {
+                const uv = interpolateUv(geometry, material.map, aIdx, bIdx, cIdx, wA, wB, wC);
+                const texel = uv && sampleTexture(material.map, uv[0], uv[1], invertTextures);
+                if (texel) { r *= texel[0]; g *= texel[1]; b *= texel[2]; a *= texel[3]; }
+            }
+            const colors = material.vertexColors && geometry.attributes.color;
+            if (colors) {
+                r *= wA * colors.getX(aIdx) + wB * colors.getX(bIdx) + wC * colors.getX(cIdx);
+                g *= wA * colors.getY(aIdx) + wB * colors.getY(bIdx) + wC * colors.getY(cIdx);
+                b *= wA * colors.getZ(aIdx) + wB * colors.getZ(bIdx) + wC * colors.getZ(cIdx);
+                if (colors.itemSize === 4) a *= wA * colors.getW(aIdx) + wB * colors.getW(bIdx) + wC * colors.getW(cIdx);
+            }
+            if (material.emissive && (material.emissive.r || material.emissive.g || material.emissive.b)) {
+                _emissive.copy(material.emissive).multiplyScalar(material.emissiveIntensity ?? 1);
+                let er = _emissive.r, eg = _emissive.g, eb = _emissive.b;
+                if (material.emissiveMap) {
+                    const uv = interpolateUv(geometry, material.emissiveMap, aIdx, bIdx, cIdx, wA, wB, wC);
+                    const texel = uv && sampleTexture(material.emissiveMap, uv[0], uv[1], invertTextures);
+                    if (texel) { er *= texel[0]; eg *= texel[1]; eb *= texel[2]; }
+                }
+                r = Math.min(1, r + er); g = Math.min(1, g + eg); b = Math.min(1, b + eb);
+            }
+            if (material.alphaTest > 0) { if (a < material.alphaTest) return null; a = 1; }
+            else if (!material.transparent) a = 1;
+            else if (a < 0.1) return null;
+            return [linearToSrgb(r), linearToSrgb(g), linearToSrgb(b), a];
+        }
+        function materialResolver(mesh) {
+            if (!Array.isArray(mesh.material)) return () => mesh.material;
+            const groups = [...mesh.geometry.groups].sort((x, y) => x.start - y.start);
+            return firstIndex => {
+                for (const group of groups) if (firstIndex >= group.start && firstIndex < group.start + group.count) return mesh.material[group.materialIndex];
+                return null;
+            };
+        }
+        function isShown(object) {
+            let shown = true;
+            object.traverseAncestors(parent => { if (parent.visible === false) shown = false; });
+            return shown && object.visible !== false;
+        }
+
+        function findBestOffset(coords, axis) {
+            let bestOffset = 0; let minChunks = Infinity;
+            for (let offset = 0; offset < 32; offset++) {
+                const chunks = new Set();
+                for (let i = 0; i < coords.length; i++) chunks.add(Math.floor((coords[i][axis] + offset) / 32));
+                if (chunks.size < minChunks) { minChunks = chunks.size; bestOffset = offset; }
+                if (minChunks === 1) break;
+            }
+            return bestOffset;
+        }
+
+        const FACE_DIRS = [[1, 0, 0], [-1, 0, 0], [0, 1, 0], [0, -1, 0], [0, 0, 1], [0, 0, -1]];
+        const SLOT = 5;
+
+        async function generateVoxels() {
+            if (!loadedScene) return;
+            applyModelRotation();
+            textureDataCache.clear();
+            voxelMeshes.forEach(m => { scene.remove(m); m.geometry.dispose(); m.material.dispose(); });
+            voxelMeshes = [];
+            if (borderMesh) { scene.remove(borderMesh); borderMesh = null; }
+            if (chunkGridMesh) { scene.remove(chunkGridMesh); chunkGridMesh = null; }
+
+            loadingDiv.style.display = 'flex'; progressBar.style.width = "0%";
+
+            const resolution = parseInt(document.getElementById('resolution').value);
+            const enableGlass = document.getElementById('enableGlass').checked;
+            const roofBias = document.getElementById('roofBias').checked;
+            const useTopology = document.getElementById('topologyCheck').checked;
+            const optimizeChunks = document.getElementById('optimizeChunks').checked;
+            const invertTextures = !document.getElementById('flipY').checked;
+
+            const box = getVisibleGeometryBounds(loadedScene);
+            const size = box.getSize(new THREE.Vector3());
+            const maxDim = Math.max(size.x, size.y, size.z);
+            if (!Number.isFinite(maxDim) || maxDim <= 0) {
+                loadingDiv.style.display = 'none';
+                alert('The model has no usable size.');
+                return;
+            }
+            const gridSize = maxDim / resolution;
+
+            const workQueue = [];
+            let totalTriangles = 0;
+            loadedScene.traverse((child) => {
+                if (!child.isMesh || !child.geometry?.attributes?.position || !isShown(child)) return;
+                const count = child.geometry.index ? child.geometry.index.count / 3 : child.geometry.attributes.position.count / 3;
+                workQueue.push({ mesh: child, count });
+                totalTriangles += count;
+            });
+
+            const slots = new Map();
+            const _vA = new THREE.Vector3(), _vB = new THREE.Vector3(), _vC = new THREE.Vector3();
+            const _p = new THREE.Vector3(), _e0 = new THREE.Vector3(), _e1 = new THREE.Vector3(), _normal = new THREE.Vector3();
+            let processed = 0;
+            progressState.innerText = "Sampling surfaces...";
+            for (const item of workQueue) {
+                const mesh = item.mesh, geometry = mesh.geometry, position = geometry.attributes.position, index = geometry.index;
+                if (mesh.isSkinnedMesh) mesh.skeleton.update();
+                const materialOf = materialResolver(mesh);
+                const windingSign = mesh.matrixWorld.determinant() < 0 ? -1 : 1;
+                const processTri = (first, aIdx, bIdx, cIdx) => {
+                    const material = materialOf(first);
+                    if (!material || material.visible === false) return;
+                    getVertexWorldPosition(mesh, position, aIdx, _vA);
+                    getVertexWorldPosition(mesh, position, bIdx, _vB);
+                    getVertexWorldPosition(mesh, position, cIdx, _vC);
+                    _e0.subVectors(_vB, _vA); _e1.subVectors(_vC, _vA);
+                    _normal.crossVectors(_e0, _e1);
+                    if (_normal.lengthSq() === 0) return;
+                    _normal.normalize().multiplyScalar(windingSign);
+                    const stepSize = gridSize * 0.5;
+                    const stepsB = Math.max(1, Math.ceil(_e0.length() / stepSize));
+                    const stepsC = Math.max(1, Math.ceil(_e1.length() / stepSize));
+                    for (let u = 0; u <= stepsB; u++) {
+                        const t1 = u / stepsB;
+                        for (let v = 0; v <= stepsC * (1 - t1) + 1e-9; v++) {
+                            const t2 = Math.min(v / stepsC, 1 - t1);
+                            _p.copy(_vA).addScaledVector(_e0, t1).addScaledVector(_e1, t2);
+                            const gx = Math.round(_p.x / gridSize), gy = Math.round(_p.y / gridSize), gz = Math.round(_p.z / gridSize);
+                            const key = `${gx},${gy},${gz}`;
+                            let cell = slots.get(key);
+                            const ox = _p.x / gridSize - gx, oy = _p.y / gridSize - gy, oz = _p.z / gridSize - gz;
+                            let color = null, computed = false;
+                            for (let face = 0; face < 6; face++) {
+                                const [dx, dy, dz] = FACE_DIRS[face];
+                                const facing = _normal.x * dx + _normal.y * dy + _normal.z * dz;
+                                if (facing < 0.3) continue;
+                                let score = facing + 0.6 * (ox * dx + oy * dy + oz * dz);
+                                if (roofBias && face === 2) score += 0.15;
+                                if (cell && cell[face * SLOT] >= score) continue;
+                                if (!computed) {
+                                    computed = true;
+                                    const wB = t1 * 0.995 + 0.005 / 3, wC = t2 * 0.995 + 0.005 / 3, wA = 1 - wB - wC;
+                                    color = surfaceColor(mesh, material, aIdx, bIdx, cIdx, wA, wB, wC, invertTextures);
+                                }
+                                if (!color) break;
+                                if (!cell) { cell = new Float32Array(6 * SLOT).fill(-1); slots.set(key, cell); }
+                                cell.set([score, color[0], color[1], color[2], color[3]], face * SLOT);
+                            }
+                        }
+                    }
+                };
+                if (index) for (let t = 0; t < index.count; t += 3) processTri(t, index.getX(t), index.getX(t + 1), index.getX(t + 2));
+                else for (let t = 0; t < position.count; t += 3) processTri(t, t, t + 1, t + 2);
+                processed += item.count;
+                const pct = Math.floor(processed / Math.max(1, totalTriangles) * 90);
+                progressBar.style.width = pct + "%"; progressNum.innerText = pct + "%";
+                await new Promise(r => setTimeout(r, 0));
+            }
+
+            progressState.innerText = "Finding outer surfaces...";
+            await new Promise(r => setTimeout(r, 0));
+            let minGX = Infinity, minGY = Infinity, minGZ = Infinity, maxGX = -Infinity, maxGY = -Infinity, maxGZ = -Infinity;
+            for (const key of slots.keys()) {
+                const [x, y, z] = key.split(',').map(Number);
+                if (x < minGX) minGX = x; if (y < minGY) minGY = y; if (z < minGZ) minGZ = z;
+                if (x > maxGX) maxGX = x; if (y > maxGY) maxGY = y; if (z > maxGZ) maxGZ = z;
+            }
+            const NX = maxGX - minGX + 3, NY = maxGY - minGY + 3, NZ = maxGZ - minGZ + 3;
+            const cellIndex = (x, y, z) => ((x - minGX + 1) * NY + (y - minGY + 1)) * NZ + (z - minGZ + 1);
+            let outside = null;
+            if (useTopology && slots.size && NX * NY * NZ < 64e6) {
+                const solid = new Uint8Array(NX * NY * NZ);
+                for (const key of slots.keys()) { const [x, y, z] = key.split(',').map(Number); solid[cellIndex(x, y, z)] = 1; }
+                outside = new Uint8Array(NX * NY * NZ);
+                const queue = new Int32Array(NX * NY * NZ);
+                let head = 0, tail = 0;
+                outside[0] = 1; queue[tail++] = 0;
+                while (head < tail) {
+                    const i = queue[head++];
+                    const z = i % NZ, y = Math.floor(i / NZ) % NY, x = Math.floor(i / (NY * NZ));
+                    const visit = j => { if (!outside[j] && !solid[j]) { outside[j] = 1; queue[tail++] = j; } };
+                    if (x > 0) visit(i - NY * NZ); if (x < NX - 1) visit(i + NY * NZ);
+                    if (y > 0) visit(i - NZ); if (y < NY - 1) visit(i + NZ);
+                    if (z > 0) visit(i - 1); if (z < NZ - 1) visit(i + 1);
+                }
+            }
+
+            const tempVoxelMap = new Map();
+            for (const [key, cell] of slots) {
+                const [gx, gy, gz] = key.split(',').map(Number);
+                let best = -1, bestScore = -Infinity, bestExposed = -1, bestExposedScore = -Infinity;
+                for (let face = 0; face < 6; face++) {
+                    const score = cell[face * SLOT];
+                    if (score < 0) continue;
+                    if (score > bestScore) { bestScore = score; best = face; }
+                    if (outside) {
+                        const [dx, dy, dz] = FACE_DIRS[face];
+                        if (outside[cellIndex(gx + dx, gy + dy, gz + dz)] && score > bestExposedScore) { bestExposedScore = score; bestExposed = face; }
+                    }
+                }
+                const face = bestExposed >= 0 ? bestExposed : best;
+                if (face < 0) continue;
+                const o = face * SLOT;
+                tempVoxelMap.set(key, { gx, gy, gz, r: cell[o + 1], g: cell[o + 2], b: cell[o + 3], a: cell[o + 4] });
+            }
+
+            progressState.innerText = "Optimizing Position...";
+            await new Promise(r => setTimeout(r, 10));
+
+            let offsetX = 0, offsetY = 0, offsetZ = 0;
+            const coords = Array.from(tempVoxelMap.values()).map(v => ({ x: v.gx, y: v.gy, z: v.gz }));
+
+            if (coords.length > 0) {
+                if (optimizeChunks) {
+                    offsetX = findBestOffset(coords, 'x');
+                    offsetY = findBestOffset(coords, 'y');
+                    offsetZ = findBestOffset(coords, 'z');
+                }
+                let minX = Infinity, maxX = -Infinity;
+                let minY = Infinity, maxY = -Infinity;
+                let minZ = Infinity, maxZ = -Infinity;
+                coords.forEach(c => {
+                    const nx = c.x + offsetX;
+                    const ny = c.y + offsetY;
+                    const nz = c.z + offsetZ;
+                    if (nx < minX) minX = nx; if (nx > maxX) maxX = nx;
+                    if (ny < minY) minY = ny; if (ny > maxY) maxY = ny;
+                    if (nz < minZ) minZ = nz; if (nz > maxZ) maxZ = nz;
+                });
+                const centerAxis = (min, max) => {
+                    const startChunk = Math.floor(min / 32) * 32;
+                    const endChunk = (Math.floor(max / 32) + 1) * 32;
+                    const totalSpace = endChunk - startChunk;
+                    const modelSize = max - min + 1;
+                    return Math.floor((totalSpace - modelSize) / 2);
+                };
+                offsetX += centerAxis(minX, maxX);
+                offsetY += centerAxis(minY, maxY);
+                offsetZ += centerAxis(minZ, maxZ);
+            }
+
+            progressState.innerText = "Rendering...";
+            await new Promise(r => setTimeout(r, 10));
+
+            const activeChunks = new Set();
+            const solidData = [];
+            const glassData = [];
+            const allVoxelPositions = [];
+
+            for (const d of tempVoxelMap.values()) {
+                const finalGx = d.gx + offsetX;
+                const finalGy = d.gy + offsetY;
+                const finalGz = d.gz + offsetZ;
+                activeChunks.add(`${Math.floor(finalGx / 32)},${Math.floor(finalGy / 32)},${Math.floor(finalGz / 32)}`);
+                const worldPos = { x: finalGx, y: finalGy, z: finalGz, r: d.r, g: d.g, b: d.b, a: d.a };
+                if (d.a > 0.9 || !enableGlass) solidData.push(worldPos); else glassData.push(worldPos);
+                allVoxelPositions.push(worldPos);
+            }
+            lastVoxelData = [];
+
+            for (const d of tempVoxelMap.values()) {
+                lastVoxelData.push({ x: d.gx + offsetX, y: d.gy + offsetY, z: d.gz + offsetZ, r: d.r, g: d.g, b: d.b, a: d.a });
+            }
+
+            let voxelSizeText = '0 x 0 x 0';
+            if (lastVoxelData.length > 0) {
+                let vxMin = Infinity, vyMin = Infinity, vzMin = Infinity;
+                let vxMax = -Infinity, vyMax = -Infinity, vzMax = -Infinity;
+                lastVoxelData.forEach(v => {
+                    vxMin = Math.min(vxMin, v.x); vyMin = Math.min(vyMin, v.y); vzMin = Math.min(vzMin, v.z);
+                    vxMax = Math.max(vxMax, v.x); vyMax = Math.max(vyMax, v.y); vzMax = Math.max(vzMax, v.z);
+                });
+                voxelSizeText = `${vxMax - vxMin + 1} x ${vyMax - vyMin + 1} x ${vzMax - vzMin + 1}`;
+            }
+            document.getElementById('chunkStats').innerHTML = `Voxels: ${allVoxelPositions.length}<br>Size: ${voxelSizeText} | Chunks: ${activeChunks.size}`;
+            const geometry = new THREE.BoxGeometry(1, 1, 1);
+            const matSolid = new THREE.MeshStandardMaterial({ roughness: 0.4, metalness: 0.1, polygonOffset: true, polygonOffsetFactor: 1, polygonOffsetUnits: 1 });
+
+            if (solidData.length > 0) {
+                const mesh = new THREE.InstancedMesh(geometry, matSolid, solidData.length);
+                mesh.castShadow = false; mesh.receiveShadow = false;
+                let idx = 0; const dummy = new THREE.Object3D(); const col = new THREE.Color();
+                for (const d of solidData) {
+                    dummy.position.set(d.x, d.y, d.z); dummy.updateMatrix();
+                    mesh.setMatrixAt(idx, dummy.matrix);
+                    previewColor(d, col, mesh.material.transparent);
+                    mesh.setColorAt(idx, col); idx++;
+                }
+                mesh.instanceMatrix.needsUpdate = true;
+                if (mesh.instanceColor) mesh.instanceColor.needsUpdate = true;
+                mesh.userData.voxels = mesh.material.transparent ? glassData : solidData;
+                scene.add(mesh);
+                voxelMeshes.push(mesh);
+            }
+
+            if (glassData.length > 0) {
+                const matGlass = new THREE.MeshStandardMaterial({ roughness: 0.1, metalness: 0.1, transparent: true, opacity: 0.2, depthWrite: false });
+                const mesh = new THREE.InstancedMesh(geometry, matGlass, glassData.length);
+                let idx = 0; const dummy = new THREE.Object3D(); const col = new THREE.Color();
+                for (const d of glassData) {
+                    dummy.position.set(d.x, d.y, d.z); dummy.updateMatrix();
+                    mesh.setMatrixAt(idx, dummy.matrix);
+                    previewColor(d, col, mesh.material.transparent);
+                    mesh.setColorAt(idx, col); idx++;
+                }
+                mesh.instanceMatrix.needsUpdate = true;
+                if (mesh.instanceColor) mesh.instanceColor.needsUpdate = true;
+                mesh.userData.voxels = mesh.material.transparent ? glassData : solidData;
+                scene.add(mesh);
+                voxelMeshes.push(mesh);
+            }
+
+            if (allVoxelPositions.length > 0) {
+                const borderGeo = new THREE.BoxGeometry(1.002, 1.002, 1.002);
+                const borderMat = new THREE.MeshBasicMaterial({ color: 0x000000, wireframe: true, transparent: true, opacity: 0.3 });
+                borderMesh = new THREE.InstancedMesh(borderGeo, borderMat, allVoxelPositions.length);
+                let idx = 0; const dummy = new THREE.Object3D();
+                for (const d of allVoxelPositions) {
+                    dummy.position.set(d.x, d.y, d.z); dummy.updateMatrix();
+                    borderMesh.setMatrixAt(idx, dummy.matrix); idx++;
+                }
+                borderMesh.instanceMatrix.needsUpdate = true;
+                borderMesh.visible = document.getElementById('showBorders').checked;
+                scene.add(borderMesh);
+            }
+
+            if (activeChunks.size > 0) {
+                const chunkWorldSize = 32;
+                const boxGeo = new THREE.BoxGeometry(chunkWorldSize, chunkWorldSize, chunkWorldSize);
+                const edgesGeo = new THREE.EdgesGeometry(boxGeo);
+                const chunkMat = new THREE.LineBasicMaterial({ color: 0x00BF63, linewidth: 2 });
+                const vertices = [];
+                activeChunks.forEach(chunkKey => {
+                    const [cx, cy, cz] = chunkKey.split(',').map(Number);
+                    const x = (cx * 32) + (chunkWorldSize / 2) - 0.5;
+                    const y = (cy * 32) + (chunkWorldSize / 2) - 0.5;
+                    const z = (cz * 32) + (chunkWorldSize / 2) - 0.5;
+                    const posAttr = edgesGeo.attributes.position;
+                    for (let i = 0; i < posAttr.count; i++) vertices.push(posAttr.getX(i) + x, posAttr.getY(i) + y, posAttr.getZ(i) + z);
+                });
+                const combinedGeo = new THREE.BufferGeometry();
+                combinedGeo.setAttribute('position', new THREE.Float32BufferAttribute(vertices, 3));
+                chunkGridMesh = new THREE.LineSegments(combinedGeo, chunkMat);
+                chunkGridMesh.visible = document.getElementById('showChunks').checked;
+                scene.add(chunkGridMesh);
+            }
+
+            const centerBox = new THREE.Box3();
+            voxelMeshes.forEach(m => centerBox.expandByObject(m));
+            const c = centerBox.getCenter(new THREE.Vector3());
+            voxelMeshes.forEach(m => m.position.sub(c));
+            if (borderMesh) borderMesh.position.sub(c);
+            if (chunkGridMesh) chunkGridMesh.position.sub(c);
+
+            const finalSize = centerBox.getSize(new THREE.Vector3());
+            gridHelper.position.y = -finalSize.y / 2 - 0.01;
+            const maxS = Math.max(finalSize.x, finalSize.y, finalSize.z);
+            const safeSize = Math.max(maxS, 1);
+            const verticalFov = THREE.MathUtils.degToRad(camera.fov);
+            const horizontalFov = 2 * Math.atan(Math.tan(verticalFov / 2) * camera.aspect);
+            const limitingFov = Math.min(verticalFov, horizontalFov);
+            const radius = Math.max(finalSize.length() / 2, 0.5);
+            const dist = radius / Math.sin(limitingFov / 2) * 1.05;
+            camera.near = Math.max(safeSize / 1000, 0.001);
+            camera.far = Math.max(safeSize * 100, dist * 20, 1000);
+            camera.updateProjectionMatrix();
+            controls.minDistance = Math.max(safeSize * 0.08, camera.near * 4);
+            controls.maxDistance = Math.max(safeSize * 50, dist * 10);
+            camera.position.set(0.75, 0.6, 0.75).normalize().multiplyScalar(dist);
+            camera.lookAt(0, 0, 0);
+            controls.target.set(0, 0, 0);
+            controls.update();
+
+            loadingDiv.style.display = 'none';
+        }
+
+        document.getElementById('exportRLEBtn').addEventListener('click', async () => {
+            if (!lastVoxelData || lastVoxelData.length === 0) { alert("Please generate first!"); return; }
+            await Promise.race([paletteReady, new Promise(r => setTimeout(r, 8000))]);
+
+            const getId = (n) => blockIds[n] ?? ((typeof typeToId !== 'undefined') ? (typeToId[n] ?? 0) : 0);
+            let minX = Infinity, minY = Infinity, minZ = Infinity;
+            let maxX = -Infinity, maxY = -Infinity, maxZ = -Infinity;
+
+            lastVoxelData.forEach(v => {
+                const ix = Math.round(v.x), iy = Math.round(v.y), iz = Math.round(v.z);
+                minX = Math.min(minX, ix); minY = Math.min(minY, iy); minZ = Math.min(minZ, iz);
+                maxX = Math.max(maxX, ix); maxY = Math.max(maxY, iy); maxZ = Math.max(maxZ, iz);
+            });
+
+            const width = (maxX - minX) + 1;
+            const height = (maxY - minY) + 1;
+            const length = (maxZ - minZ) + 1;
+
+            const voxelArray = Array.from({ length: length }, () =>
+                Array.from({ length: height }, () =>
+                    new Array(width).fill(0)
+                )
+            );
+
+            lastVoxelData.forEach(v => {
+                const ix = Math.round(v.x) - minX;
+                const iy = Math.round(v.y) - minY;
+                const iz = Math.round(v.z) - minZ;
+
+                const blockName = Module.getBestBlockFor(
+                    rgbToHex(Math.floor(v.r * 255), Math.floor(v.g * 255), Math.floor(v.b * 255)),
+                    (v.a <= 0.4 ? 1 : (v.a <= 0.9 ? 2 : 0))
+                );
+
+                voxelArray[iz][iy][ix] = getId(blockName);
+            });
+
+            const fileName = document.getElementById('fileNameDisplay').innerText.split('.')[0] || "model";
+
+            const schem = new Bloxdschem({
+                array: voxelArray,
+                name: fileName
+            });
+
+            let buffer;
+            try { buffer = schem.toArrayBuffer(); }
+            catch (error) { console.error(error); alert('The schematic could not be written: ' + error.message); return; }
+
+            const blob = new Blob([buffer], { type: 'application/octet-stream' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `${fileName}.bloxdschem`;
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+            setTimeout(() => URL.revokeObjectURL(url), 10000);
+        });
+        function animate() {
+            requestAnimationFrame(animate); controls.update();
+            renderer.setViewport(0, 0, w, h); renderer.setScissor(0, 0, w, h); renderer.setScissorTest(true);
+            renderer.render(scene, camera);
+            viewCubeCamera.position.copy(camera.position).sub(controls.target).normalize().multiplyScalar(5); viewCubeCamera.lookAt(0, 0, 0);
+            const size = 120; renderer.clearDepth(); renderer.setScissor(w - size - 20, 20, size, size); renderer.setViewport(w - size - 20, 20, size, size);
+            renderer.render(viewCubeScene, viewCubeCamera); renderer.setScissorTest(false);
+        }
+
+        function handleResize() {
+            w = canvasContainer.clientWidth; h = canvasContainer.clientHeight;
+            camera.aspect = w / h; camera.updateProjectionMatrix(); renderer.setSize(w, h);
+        }
+        window.addEventListener('resize', handleResize);
+        setTimeout(handleResize, 100);
+        animate();
+    </script>
+</body>
+
+</html>
